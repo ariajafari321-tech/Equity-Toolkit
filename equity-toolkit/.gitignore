@@ -1,0 +1,23 @@
+# Data — never commit datasets. Commit the script that downloads them instead,
+# so the work is reproducible without bloating the repo.
+data/
+*.csv
+*.parquet
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ipynb_checkpoints/
+*.egg-info/
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
