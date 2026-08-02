@@ -86,6 +86,11 @@ def download_prices(
 
 
 def load_raw(path: str | Path) -> pd.DataFrame:
+
+    df = pd.read_csv(path, parse_dates=['date'])
+    df = df[RAW_COLUMNS]
+    return df
+
     """Load the tidy CSV written by `download_prices`.
 
     Returns
@@ -99,7 +104,7 @@ def load_raw(path: str | Path) -> pd.DataFrame:
     expect are present and fail loudly if they aren't — a data loader that
     silently returns a half-empty frame will cost you an afternoon later.
     """
-    raise NotImplementedError
+    
 
 
 # --------------------------------------------------------------------------- #
