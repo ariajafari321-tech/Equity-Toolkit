@@ -107,6 +107,14 @@ def load_raw(path: str | Path) -> pd.DataFrame:
 # --------------------------------------------------------------------------- #
 
 def to_wide(long_df: pd.DataFrame, field: str = "adj_close") -> pd.DataFrame:
+
+    df_pivoted = long_df.pivot(index="date", columns="ticker", values=field)
+
+    df_pivoted = df_pivoted.sort_index().sort_index(axis=1)
+
+    return df_pivoted
+    
+
     """Pivot long-format data into a wide price matrix.
 
     Returns
@@ -121,7 +129,7 @@ def to_wide(long_df: pd.DataFrame, field: str = "adj_close") -> pd.DataFrame:
     here. Distinguishing "no trade" from "missing data" is the job of
     `find_defects`.
     """
-    raise NotImplementedError
+    
 
 
 # --------------------------------------------------------------------------- #
