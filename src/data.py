@@ -254,7 +254,9 @@ def align_calendar(wide: pd.DataFrame, min_coverage: float = 0.8) -> pd.DataFram
     This is a *row filter*, not an imputation. Removing a date is causal;
     inventing a price is not.
     """
-    raise NotImplementedError
+    coverage = wide.notna().sum(axis=1) / wide.shape[1]
+    filtered_coverage = coverage>= min_coverage
+    return wide.loc[filtered_coverage]
 
 
 def clean_prices(wide: pd.DataFrame, max_gap: int = 5) -> pd.DataFrame:
