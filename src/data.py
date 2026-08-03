@@ -29,6 +29,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+import yfinance as yf
 
 # Columns every raw price file is expected to carry.
 RAW_COLUMNS = ["date", "ticker", "open", "high", "low", "close", "adj_close", "volume"]
@@ -48,6 +49,7 @@ def download_prices(
     end: str,
     out_path: str | Path,
 ) -> Path:
+    
     """Download daily OHLCV bars and write them to a single tidy CSV.
 
     Parameters
@@ -82,14 +84,16 @@ def download_prices(
     Do NOT silently skip tickers that fail to download. Collect the failures and
     report them — a silently missing ticker is a survivorship-flavoured bug.
     """
-    raise NotImplementedError
+    df = yf.download(tickers, start=start, end=end, auto_adjust=False).stack(level=1).reset_index()
+    df.columns = df.columns.str.strip().str.lower().str.replace(" ", "_")
+    df = df[RAW_COLUMNS]
+    df.to_csv(out_path, index=False)
+    return Path(out_path)
 
 
 def load_raw(path: str | Path) -> pd.DataFrame:
 
-    df = pd.read_csv(path, parse_dates=['date'])
-    df = df[RAW_COLUMNS]
-    return df
+
 
     """Load the tidy CSV written by `download_prices`.
 
@@ -104,7 +108,9 @@ def load_raw(path: str | Path) -> pd.DataFrame:
     expect are present and fail loudly if they aren't — a data loader that
     silently returns a half-empty frame will cost you an afternoon later.
     """
-    
+    df = pd.read_csv(path, parse_dates=['date'])
+    df = df[RAW_COLUMNS]
+    return df
 
 
 # --------------------------------------------------------------------------- #
@@ -112,14 +118,7 @@ def load_raw(path: str | Path) -> pd.DataFrame:
 # --------------------------------------------------------------------------- #
 
 def to_wide(long_df: pd.DataFrame, field: str = "adj_close") -> pd.DataFrame:
-
-    df_pivoted = long_df.pivot(index="date", columns="ticker", values=field)
-
-    df_pivoted = df_pivoted.sort_index().sort_index(axis=1)
-
-    return df_pivoted
     
-
     """Pivot long-format data into a wide price matrix.
 
     Returns
@@ -134,7 +133,10 @@ def to_wide(long_df: pd.DataFrame, field: str = "adj_close") -> pd.DataFrame:
     here. Distinguishing "no trade" from "missing data" is the job of
     `find_defects`.
     """
-    
+
+    df_pivoted = long_df.pivot(index="date", columns="ticker", values=field)
+    df_pivoted = df_pivoted.sort_index().sort_index(axis=1)
+    return df_pivoted
 
 
 # --------------------------------------------------------------------------- #
