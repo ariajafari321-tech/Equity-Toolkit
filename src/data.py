@@ -290,4 +290,6 @@ def clean_prices(wide: pd.DataFrame, max_gap: int = 5) -> pd.DataFrame:
     The causality test in `tests/test_data.py` will catch violations of rule 1.
     Run it early and often.
     """
-    raise NotImplementedError
+    cleaned_wide = wide.ffill(limit=max_gap, inplace=False)
+    return cleaned_wide
+
