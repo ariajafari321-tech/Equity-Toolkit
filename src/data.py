@@ -25,6 +25,7 @@ Do not change the function signatures — the tests depend on them.
 
 from __future__ import annotations
 
+import grp
 from pathlib import Path
 
 import numpy as np
@@ -212,7 +213,63 @@ def find_defects(
     doing it wrong — that loop will take minutes on 10 years x 30 tickers and
     milliseconds if you express it as column operations.
     """
-    raise NotImplementedError
+
+    rows = []
+    for ticker in wide.columns:
+            count = wide[ticker].notna().sum()
+    
+            if count < min_obs:
+                rows.append({"ticker": ticker, 
+                             "date": pd.NaT, 
+                             "kind": "short_history", 
+                             "detail": f"{count} observations"
+                        })
+
+            series = wide[ticker]
+            missing_today = series.isna()
+            market_open = wide.notna().any(axis=1)
+            first = series.first_valid_index()
+            last = series.last_valid_index()
+            inside_history = (series.index >= first) & (series.index <= last)
+            missing = missing_today & market_open & inside_history
+            for d in series.index[missing]:
+                rows.append({"ticker": ticker, "date": d, "kind": "missing", "detail": "no price"})
+
+            log_ret = np.log(series).diff()
+            big = log_ret.abs() > extreme_return
+
+            for d, r in log_ret[big].items():
+                rows.append({
+            "ticker": ticker,
+            "date": d,
+            "kind": "extreme_return",
+            "detail": f"log return {r:.4f}",
+        })
+
+
+
+    same = (series.diff() == 0) & series.notna()
+    grp = (~same).cumsum()
+    run = same.groupby(grp).transform("sum")
+    stale = run >= (stale_run - 1)
+    for d in series.index[stale]:
+        rows.append({"ticker": ticker, "date": d, "kind": "stale_price", "detail": "repeated price"})
+
+
+
+    if not rows:
+        return pd.DataFrame(columns=DEFECT_COLUMNS)
+    return pd.DataFrame(rows)[DEFECT_COLUMNS]
+
+    
+        
+
+
+
+
+
+
+
 
 
 def defect_summary(defects: pd.DataFrame) -> pd.DataFrame:
