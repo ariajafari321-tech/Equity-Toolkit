@@ -285,7 +285,8 @@ def defect_summary(defects: pd.DataFrame) -> pd.DataFrame:
     This is the table that goes in your README. It is how you show, in one
     glance, that you know your data.
     """
-    raise NotImplementedError
+    summary = defects.groupby(["ticker", "kind"]).size().unstack(fill_value=0)
+    return summary
 
 
 # --------------------------------------------------------------------------- #
