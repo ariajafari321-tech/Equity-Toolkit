@@ -1,3 +1,6 @@
+import sys, pathlib
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1]))
+import os; print(os.getcwd())
 import sys; sys.path.insert(0, ".")
 import numpy as np, pandas as pd
 from src.data import find_defects

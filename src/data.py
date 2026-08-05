@@ -25,7 +25,7 @@ Do not change the function signatures — the tests depend on them.
 
 from __future__ import annotations
 
-import grp
+
 from pathlib import Path
 
 import numpy as np
