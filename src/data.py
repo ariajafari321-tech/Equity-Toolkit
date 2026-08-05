@@ -248,12 +248,12 @@ def find_defects(
 
 
 
-    same = (series.diff() == 0) & series.notna()
-    grp = (~same).cumsum()
-    run = same.groupby(grp).transform("sum")
-    stale = run >= (stale_run - 1)
-    for d in series.index[stale]:
-        rows.append({"ticker": ticker, "date": d, "kind": "stale_price", "detail": "repeated price"})
+            same = (series.diff() == 0) & series.notna()
+            grp = (~same).cumsum()
+            run = same.groupby(grp).transform("sum")
+            stale = run >= (stale_run - 1)
+            for d in series.index[stale]:
+                rows.append({"ticker": ticker, "date": d, "kind": "stale_price", "detail": "repeated price"})
 
 
 
