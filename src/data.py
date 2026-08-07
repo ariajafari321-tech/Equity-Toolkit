@@ -261,15 +261,6 @@ def find_defects(
         return pd.DataFrame(columns=DEFECT_COLUMNS)
     return pd.DataFrame(rows)[DEFECT_COLUMNS]
 
-    
-        
-
-
-
-
-
-
-
 
 
 def defect_summary(defects: pd.DataFrame) -> pd.DataFrame:

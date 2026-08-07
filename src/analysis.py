@@ -32,7 +32,8 @@ def simple_returns(prices: pd.DataFrame) -> pd.DataFrame:
     The first row is NaN by construction — there is no prior price. Keep it as
     NaN rather than dropping it, so the index still aligns with `prices`.
     """
-    raise NotImplementedError
+    returned_prices = prices.pct_change()
+    return returned_prices
 
 
 def log_returns(prices: pd.DataFrame) -> pd.DataFrame:
@@ -60,7 +61,8 @@ def log_returns(prices: pd.DataFrame) -> pd.DataFrame:
     its constituents' log returns. For cross-sectional portfolio construction you
     want simple returns. Time series → logs. Cross-section → simple.
     """
-    raise NotImplementedError
+    log_info = np.log(prices) - np.log(prices.shift(1))
+    return log_info
 
 
 # --------------------------------------------------------------------------- #
