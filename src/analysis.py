@@ -105,7 +105,10 @@ def rolling_volatility(
     ddof=0 (population). They differ. Pick one, know which, and be consistent —
     the test suite assumes ddof=1.
     """
-    raise NotImplementedError
+    rolling_std = returns.rolling(window=window).std(ddof=1)
+    if annualize:
+        rolling_std *= np.sqrt(periods_per_year)
+    return rolling_std
 
 
 # --------------------------------------------------------------------------- #
