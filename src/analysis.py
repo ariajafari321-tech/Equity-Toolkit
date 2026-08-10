@@ -177,7 +177,9 @@ def average_pairwise_correlation(corr: pd.DataFrame) -> float:
     This single number is a decent proxy for "how much is everything moving
     together right now," which is the quantity your research question is about.
     """
-    raise NotImplementedError
+    n = corr.shape[0]
+    i, j = np.triu_indices(n,k=1)
+    return corr.values[i, j].mean()
 
 
 def rolling_average_pairwise_correlation(
