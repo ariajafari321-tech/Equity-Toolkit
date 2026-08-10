@@ -154,7 +154,15 @@ def correlation_matrix(returns: pd.DataFrame) -> pd.DataFrame:
     When this passes the test against `DataFrame.corr()`, you understand
     covariance matrices in a way that most people who use them do not.
     """
-    raise NotImplementedError
+    clean = returns.dropna()
+    centered_returns = clean.to_numpy() - clean.values.mean(axis=0)
+    covariance_matrix = centered_returns.T @ centered_returns / (centered_returns.shape[0] - 1)
+    std_dev = np.sqrt(np.diag(covariance_matrix))
+    divisor = np.outer(std_dev, std_dev)
+    corr = covariance_matrix / divisor
+    corr = (corr + corr.T) / 2  # Force symmetry
+    np.fill_diagonal(corr,1.0)
+    return pd.DataFrame(corr, index=returns.columns, columns=returns.columns)
 
 
 def average_pairwise_correlation(corr: pd.DataFrame) -> float:
