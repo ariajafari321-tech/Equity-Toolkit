@@ -218,7 +218,11 @@ def rolling_average_pairwise_correlation(
       - How much of it survives if you exclude 2020?
       - Is the effect stronger within a sector than across sectors?
     """
-    raise NotImplementedError
+    out = np.full(len(returns), np.nan)
+    for i in range(window - 1, len(returns)):
+        window_returns = returns.iloc[i - window + 1:i + 1]
+        out[i] = average_pairwise_correlation(correlation_matrix(window_returns))
+    return pd.Series(out, index=returns.index)
 
 
 # --------------------------------------------------------------------------- #
