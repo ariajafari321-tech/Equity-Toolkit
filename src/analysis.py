@@ -254,4 +254,5 @@ def first_eigenvalue_share(corr: pd.DataFrame) -> float:
     symmetric, and the symmetric solver is both faster and guaranteed to return
     real eigenvalues rather than complex ones with zero imaginary part.
     """
-    raise NotImplementedError
+    eigenvalues = np.linalg.eigvalsh(corr)
+    return float(eigenvalues.max() / eigenvalues.sum())
